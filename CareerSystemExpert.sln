@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerSystemExpert", "CareerSystemExpert\CareerSystemExpert.csproj", "{DCEAFBF2-FE94-4829-A628-36BEAAE4ACFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCEAFBF2-FE94-4829-A628-36BEAAE4ACFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEAFBF2-FE94-4829-A628-36BEAAE4ACFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEAFBF2-FE94-4829-A628-36BEAAE4ACFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEAFBF2-FE94-4829-A628-36BEAAE4ACFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3F322E9B-DB3E-4977-BE99-F537CBE2AFCC}
+	EndGlobalSection
+EndGlobal
