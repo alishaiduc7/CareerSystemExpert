@@ -1,4 +1,10 @@
+using CareerSystemExpert.NewFolder1;
+using CareerSystemExpert.NewFolder2;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddSingleton<MongoDBService>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -12,6 +18,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
