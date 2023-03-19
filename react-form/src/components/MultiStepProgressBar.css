@@ -1,0 +1,15 @@
+.step {
+  color: white;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  background-color: rgb(146, 183, 145);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step.completed {
+  background-color: rgb(77, 128, 65);
+}
