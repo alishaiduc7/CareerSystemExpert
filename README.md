@@ -1,8 +1,7 @@
 # CareerSystemExpert
 
+Run the app
 
+> go to the backend folder and then run in the terminal node index.js
 
-Run the Frontend app:
-
-> when in careerapp folder, run in terminal the command: npm start
->  
+Go to browser: http://localhost:8000/all-questions
