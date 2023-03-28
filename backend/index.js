@@ -24,43 +24,143 @@ await cursor.forEach(document =>
 
 run();
 
+app.get('/', (req, res) => {
+  const html = `
+    <html>
+      <head>
+        <style>
+          body {
+            background-color: #f5f5ed;
+            text-align: center;
+          }
+          h1 {
+            margin-top: 50px;
+          }
+          .navbar {
+            background-color: #455843;
+            overflow: hidden;
+          }
+          .navbar a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+          }
+          .navbar a:hover {
+            background-color: #b4c7ab;
+            color: black;
+          }
+          .quiz-container {
+            margin-top: 50px;
+          }
+          li {
+            margin-bottom: 10px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="navbar">
+          <a href="/">Home</a>
+          <a href="/all-questions">Quiz</a>
+        </div>
+        <div class="home-container">
+          <h1>Complete the quiz and find out the most appropriate career for you!</h1>
+          <div>
+          <button onclick="location.href='/all-questions'">Start Quiz</button>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  res.send(html);
+});
+
 app.get('/all-questions', (req, res) => {
   const questionList = questionsArray.map(question => `
     <li>
       ${question}
       <form>
         <label>
-          <input type="radio" name="${question}" value="yes">
-          Yes
+          <input type="radio" name="${question}" value="yes">Yes
         </label>
         <label>
-          <input type="radio" name="${question}" value="no">
-          No
+          <input type="radio" name="${question}" value="no">No
         </label>
       </form>
     </li>
   `).join('');
-  
-  const html = `<ul style="list-style: none; padding: 0">${questionList}</ul>`;
-  const css = `li {margin-bottom: 10px;}
-  body {
-    text-align: center;
-  }`; 
 
-  res.send(`
+  const html = `
     <html>
       <head>
-        <style>${css}</style>
+        <style>
+          body {
+            background-color: #f5f5ed;
+            text-align: center;
+          }
+          h1 {
+            margin-top: 50px;
+          }
+          .navbar {
+            background-color:#455843;
+            overflow: hidden;
+          }
+          .navbar a {
+            float: left;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+          }
+          .navbar a:hover {
+            background-color: #b4c7ab;
+            color: black;
+          }
+          .quiz-container {
+            margin-top: 50px;
+          }
+          li {
+            margin-bottom: 10px;
+          }
+          input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            height: 20px;
+            width: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+          }
+          input[type="radio"]:checked {
+            background-color:#bca597;
+            border-color:#a37c6c;
+          }
+          input[type="radio"] + span {
+            margin-left: 10px;
+            font-size: 16px;
+            font-weight: bold;
+          }
+        </style>
       </head>
       <body>
-        ${html}
+        <div class="navbar">
+          <a href="/">Home</a>
+          <a href="/all-questions">Quiz</a>
+        </div>
+        <div class="quiz-container">
+          <h1>Quiz Questions</h1>
+          <ul style="list-style: none; padding: 0">${questionList}</ul>
+        </div>
       </body>
     </html>
-  `);
+  `;
+
+  res.send(html);
 });
-
-
-
 
 app.listen(8000, () => {
   console.log("port is listening");
