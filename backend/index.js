@@ -30,9 +30,23 @@ await cursor.forEach(document =>
 
 
 run();
-app.get('/all-questions', (req,res) => {
-    res.send(questionsArray);
+app.get('/all-questions', (req, res) => {
+  const questionList = questionsArray.map(question => `<li>${question}</li>`).join('');
+  const html = `<ul style="list-style: none; padding: 0">${questionList}</ul>`;
+  const css = 'li {margin-bottom: 10px;}'; // Add some margin between each list item
+
+  res.send(`
+    <html>
+      <head>
+        <style>${css}</style>
+      </head>
+      <body>
+        ${html}
+      </body>
+    </html>
+  `);
 });
+
 
 
 app.listen(8000, () => {
