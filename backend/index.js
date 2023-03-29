@@ -9,6 +9,7 @@ const client = new MongoClient(uri, { useUnifiedTopology: true }); // { useUnifi
 
 const database = client.db("expertsystem");
 const ques = database.collection("questions");
+const rules = database.collection("rules");
 const host = 'localhost';
 const port = 8000;
 var questionsArray = [];
@@ -23,6 +24,42 @@ await cursor.forEach(document =>
 }
 
 run();
+
+async function getRules() {
+  // const cursor = rules.find({});
+  const rulesList = [];
+
+  // await cursor.forEach(async (document) => {
+  //   //console.log(document.rule);
+  //   rulesList.push(document.rule);
+  // });
+
+  // return rulesList;
+
+  for (let _id = 1; ; _id++) {
+    const document = await rules.findOne({ _id });
+    if (document != null) {
+      //console.log(document.rule);
+      // rulesList.push(document.rule);
+      const str = document.rule;
+      const matches = str.match(/\[(.*?)\]/);
+
+      if (matches) {
+        const contents = matches[1];
+        const arr = contents.split(",");
+        console.log(arr);
+        //console.log(contents); // va afișa "mathematics and computer science,adaptability,programmer,team worker"
+      }
+    }
+  }
+}
+
+// getRules();
+
+const rulesArray = getRules();
+console.log(rulesArray);
+const rulesList = await getRules();
+console.log(rulesList);
 
 app.get('/', (req, res) => {
   const html = `
