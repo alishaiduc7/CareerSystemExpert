@@ -1,5 +1,8 @@
 import { MongoClient } from "mongodb";
 import express from "express";
+import JSDOM from "jsdom"
+import bodyParser from 'body-parser';
+
 
 const app = express();
 
@@ -84,9 +87,27 @@ app.get('/', (req, res) => {
           .quiz-container {
             margin-top: 50px;
           }
+          .quiz-button {
+            padding: 16px 32px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 50px;
+            background-color: #bca597;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease-in-out;
+          }
+          .quiz-button:hover {
+            background-color: #a37c6c;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+          }
           li {
             margin-bottom: 10px;
           }
+          
         </style>
       </head>
       <body>
@@ -97,8 +118,8 @@ app.get('/', (req, res) => {
         <div class="home-container">
           <h1>Complete the quiz and find out the most appropriate career for you!</h1>
           <div>
-          <button onclick="location.href='/all-questions'">Start Quiz</button>
-          </div>
+          <button class="quiz-button" onclick="location.href='/all-questions'" style="margin: 50px;">Start Quiz</button>
+        </div>        
         </div>
       </body>
     </html>
@@ -111,14 +132,14 @@ app.get('/all-questions', (req, res) => {
   const questionList = questionsArray.map(question => `
     <li>
       ${question}
-      <form>
+      <div>
         <label>
           <input type="radio" name="${question}" value="yes">Yes
         </label>
         <label>
           <input type="radio" name="${question}" value="no">No
         </label>
-      </form>
+      </div>
     </li>
   `).join('');
 
@@ -183,13 +204,24 @@ app.get('/all-questions', (req, res) => {
         </div>
         <div class="quiz-container">
           <h1>Quiz Questions</h1>
-          <ul style="list-style: none; padding: 0">${questionList}</ul>
+          <form action="/submit-quiz" method="post">
+            <ul style="list-style: none; padding: 0">${questionList}</ul>
+            <button type="submit">Submit</button>
+          </form>
         </div>
       </body>
     </html>
   `;
 
   res.send(html);
+});
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.post('/submit-quiz', (req, res) => {
+  const answers = req.body; 
+  const values = Object.values(answers);
+  console.log(values); 
+  res.send(values);
 });
 
 app.listen(8000, () => {
