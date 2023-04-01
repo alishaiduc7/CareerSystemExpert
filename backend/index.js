@@ -26,21 +26,15 @@ await cursor.forEach(document =>
 run();
 
 async function getRules() {
-  // const cursor = rules.find({});
+
   const rulesList = [];
 
-  // await cursor.forEach(async (document) => {
-  //   //console.log(document.rule);
-  //   rulesList.push(document.rule);
-  // });
 
-  // return rulesList;
 
   for (let _id = 1; ; _id++) {
     const document = await rules.findOne({ _id });
     if (document != null) {
-      //console.log(document.rule);
-      // rulesList.push(document.rule);
+
       const str = document.rule;
       const matches = str.match(/\[(.*?)\]/);
 
@@ -48,13 +42,12 @@ async function getRules() {
         const contents = matches[1];
         const arr = contents.split(",");
         console.log(arr);
-        //console.log(contents); // va afișa "mathematics and computer science,adaptability,programmer,team worker"
+      
       }
     }
   }
 }
 
-// getRules();
 
 const rulesArray = getRules();
 console.log(rulesArray);
