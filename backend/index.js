@@ -37,8 +37,6 @@ async function getCareers() {
   const getCareer = carreers.find({});
 await getCareer.forEach(document => {
   careersList.push(document.career); 
-  console.log(document.career);
-  
 }
 );
 }
@@ -271,8 +269,61 @@ app.post('/submit-quiz', (req, res) => {
     if(checkElementsinArray(rule, listOfTraits))
       {
     career = careersList[i];
-    res.send(career);
-    return;
+    res.send(
+      `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Quiz Results</title>
+          <style>
+            body {
+              background-color: #f5f5ed; 
+            }
+            h1 {
+              margin-top: 50px;
+            }
+            .result {
+              background-color: white;
+              padding: 20px;
+              border-radius: 10px; 
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+              max-width: 500px;
+              margin: 0 auto; 
+
+              text-align: center; 
+            }
+            .navbar {
+              background-color:#455843;
+              overflow: hidden;
+            }
+            .navbar a {
+              float: left;
+              color: white;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+            }
+            .navbar a:hover {
+              background-color: #b4c7ab;
+              color: black;
+            }
+            }
+          </style>
+        </head>
+        <body>
+        <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/all-questions">Quiz</a>
+      </div>
+          <div class="result">
+            <h2>Your recommended career:</h2>
+            <p>${career}</p>
+          </div>
+        </body>
+        </html>
+      `);
+      return;
+    
       }
   i++;
  })
