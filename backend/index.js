@@ -1,6 +1,5 @@
 import { MongoClient } from "mongodb";
 import express from "express";
-import JSDOM from "jsdom"
 import bodyParser from 'body-parser';
 
 
@@ -247,7 +246,6 @@ function howManyRules(fixedArray, inputArray) {
       if (inputArray.indexOf(fixedArray[i]) >= 0) {
         counter++;
       }
-
     }
   }
   else {
@@ -258,7 +256,6 @@ function howManyRules(fixedArray, inputArray) {
   return counter;
 }
 
-// let checker = (arr, target) => target.every(v => arr.includes(v));
 var listOfTraits = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -266,7 +263,6 @@ app.post('/submit-quiz', (req, res) => {
   const answers = req.body; 
   const values = Object.values(answers);
   if(values.length == numberOfQuestions) {
-    //here we'll create a bond between answers and traits
    var counter = 0;
    traitsArray.forEach(doc => {
     if(values[counter] == 'yes') {
@@ -282,7 +278,6 @@ app.post('/submit-quiz', (req, res) => {
   console.log(rulesList);
  rulesList.forEach(rule => {
    if(howManyRules(rule, listOfTraits) >= rule.length-1){
-    //console.log(careersList[rulesList.indexOf(rule)]);
     career.push(careersList[rulesList.indexOf(rule)]);
    } 
   })
