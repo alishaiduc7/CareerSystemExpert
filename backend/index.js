@@ -13,11 +13,14 @@ const client = new MongoClient(uri, { useUnifiedTopology: true }); // { useUnifi
 const database = client.db("expertsystem");
 const ques = database.collection("questions");
 const rules = database.collection("rules");
+const carreers = database.collection("careers");
+
 const host = 'localhost';
 const port = 8000;
 var questionsArray = [];
 var traitsArray = [];
 var rulesList = [];
+var careersList = [];
 var numberOfQuestions = 0;
 
 async function run() {
@@ -30,8 +33,19 @@ await cursor.forEach(document => {
   numberOfQuestions = questionsArray.length;
 }
 
-run();
+async function getCareers() {
+  const getCareer = carreers.find({});
+await getCareer.forEach(document => {
+  careersList.push(document.career); 
+  console.log(document.career);
+  
+}
+);
+}
 
+
+run();
+getCareers();
 var k = 0;
 async function getRules() {
   for (let _id = 1; ; _id++) {
@@ -230,7 +244,7 @@ function checkElementsinArray(fixedArray,inputArray)
     return true;
 }
 
-let checker = (arr, target) => target.every(v => arr.includes(v));
+// let checker = (arr, target) => target.every(v => arr.includes(v));
 var listOfTraits = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -255,13 +269,15 @@ app.post('/submit-quiz', (req, res) => {
     if(i==0) {
     }
     if(checkElementsinArray(rule, listOfTraits))
-    {
-   career = "software engineer";
-  }
+      {
+    career = careersList[i];
+    res.send(career);
+    return;
+      }
   i++;
  })
  
- res.send(career);
+
 });
 
 app.listen(8000, () => {
