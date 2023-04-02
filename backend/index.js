@@ -16,46 +16,40 @@ const rules = database.collection("rules");
 const host = 'localhost';
 const port = 8000;
 var questionsArray = [];
+var traitsArray = [];
+var rulesList = [];
+var numberOfQuestions = 0;
 
 async function run() {
     const cursor = ques.find({});
-
-await cursor.forEach(document => 
-    questionsArray.push(document.question)
-
+await cursor.forEach(document => {
+    questionsArray.push(document.question); 
+    traitsArray.push(document.trait);  
+  }
 );
+  numberOfQuestions = questionsArray.length;
 }
 
 run();
 
+var k = 0;
 async function getRules() {
-
-  const rulesList = [];
-
-
-
   for (let _id = 1; ; _id++) {
     const document = await rules.findOne({ _id });
     if (document != null) {
-
       const str = document.rule;
       const matches = str.match(/\[(.*?)\]/);
-
       if (matches) {
         const contents = matches[1];
         const arr = contents.split(",");
-        console.log(arr);
-      
+        rulesList.push(arr);
       }
     }
+  
   }
 }
 
-
-const rulesArray = getRules();
-console.log(rulesArray);
-const rulesList = await getRules();
-console.log(rulesList);
+getRules();
 
 app.get('/', (req, res) => {
   const html = `
@@ -215,13 +209,59 @@ app.get('/all-questions', (req, res) => {
 
   res.send(html);
 });
+function checkElementsinArray(fixedArray,inputArray)
+{
+    var fixedArraylen = fixedArray.length;
+    var inputArraylen = inputArray.length;
+    if(fixedArraylen<=inputArraylen)
+    {
+        for(var i=0;i<fixedArraylen;i++)
+        {
+            if(!(inputArray.indexOf(fixedArray[i])>=0))
+            {
+                return false;
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
+    return true;
+}
 
+let checker = (arr, target) => target.every(v => arr.includes(v));
+var listOfTraits = [];
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.post('/submit-quiz', (req, res) => {
   const answers = req.body; 
   const values = Object.values(answers);
-  console.log(values); 
-  res.send(values);
+  if(values.length == numberOfQuestions) {
+    //here we'll create a bond between answers and traits
+   var counter = 0;
+   traitsArray.forEach(doc => {
+    if(values[counter] == 'yes') {
+        listOfTraits.push(doc);
+    }
+    counter++;
+   })
+  }
+ 
+  var i = 0;
+  var career = "career";
+
+ rulesList.forEach(rule => {
+    if(i==0) {
+    }
+    if(checkElementsinArray(rule, listOfTraits))
+    {
+   career = "software engineer";
+  }
+  i++;
+ })
+ 
+ res.send(career);
 });
 
 app.listen(8000, () => {
