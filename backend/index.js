@@ -286,7 +286,10 @@ app.post('/submit-quiz', (req, res) => {
     career.push(careersList[rulesList.indexOf(rule)]);
    } 
   })
-   if(career.length !== 0){
+  console.log(career);
+   if(career.length === 0){
+    career.push("Sorry! \n We didn't find you a suitable career for you!");
+   }
     res.send( 
       `
         <!DOCTYPE html>
@@ -342,10 +345,7 @@ app.post('/submit-quiz', (req, res) => {
       `);
       return;
     
-      }
-      else{
-        res.send("We didn't find you a suitable career for you!");
-      }
+      
  });
 
 
