@@ -22,6 +22,7 @@ var traitsArray = [];
 var rulesList = [];
 var careersList = [];
 var numberOfQuestions = 0;
+var careersList = [];
 
 async function run() {
     const cursor = ques.find({});
@@ -41,9 +42,24 @@ await getCareer.forEach(document => {
 );
 }
 
+async function getCareer() {
+  for (let _id = 1; ; _id++) {
+    const document = await rules.findOne({ _id });
+    if (document != null) {
+      const str = document.rule;
+      const matches = str.match(/,[a-z ]*\)/);
+      if (matches) {
+        var result = matches[0].split(")")[0].slice(1);
+        careersList.push(result);
+      }
+    }
+  }
+}
+
 
 run();
-getCareers();
+
+
 var k = 0;
 async function getRules() {
   for (let _id = 1; ; _id++) {
@@ -62,6 +78,7 @@ async function getRules() {
 }
 
 getRules();
+getCareers();
 
 app.get('/', (req, res) => {
   const html = `
@@ -221,25 +238,24 @@ app.get('/all-questions', (req, res) => {
 
   res.send(html);
 });
-function checkElementsinArray(fixedArray,inputArray)
-{
-    var fixedArraylen = fixedArray.length;
-    var inputArraylen = inputArray.length;
-    if(fixedArraylen<=inputArraylen)
-    {
-        for(var i=0;i<fixedArraylen;i++)
-        {
-            if(!(inputArray.indexOf(fixedArray[i])>=0))
-            {
-                return false;
-            }
-        }
+function howManyRules(fixedArray, inputArray) {
+  var counter = 0;
+  var fixedArraylen = fixedArray.length;
+  var inputArraylen = inputArray.length;
+  if (fixedArraylen <= inputArraylen) {
+    for (var i = 0; i < fixedArraylen; i++) {
+      if (inputArray.indexOf(fixedArray[i]) >= 0) {
+        counter++;
+      }
+
     }
-    else
-    {
-        return false;
-    }
-    return true;
+  }
+  else {
+    return 0;
+  }
+  console.log(careersList[rulesList.indexOf(fixedArray)]);
+  console.log(counter + "/" + fixedArray.length);
+  return counter;
 }
 
 // let checker = (arr, target) => target.every(v => arr.includes(v));
@@ -261,15 +277,17 @@ app.post('/submit-quiz', (req, res) => {
   }
  
   var i = 0;
-  var career = "career";
-
+  var career = [];
+  console.log(listOfTraits);
+  console.log(rulesList);
  rulesList.forEach(rule => {
-    if(i==0) {
-    }
-    if(checkElementsinArray(rule, listOfTraits))
-      {
-    career = careersList[i];
-    res.send(
+   if(howManyRules(rule, listOfTraits) >= rule.length-1){
+    //console.log(careersList[rulesList.indexOf(rule)]);
+    career.push(careersList[rulesList.indexOf(rule)]);
+   } 
+  })
+   if(career.length !== 0){
+    res.send( 
       `
         <!DOCTYPE html>
         <html>
@@ -325,11 +343,11 @@ app.post('/submit-quiz', (req, res) => {
       return;
     
       }
-  i++;
- })
- 
+      else{
+        res.send("We didn't find you a suitable career for you!");
+      }
+ });
 
-});
 
 app.listen(8000, () => {
   console.log("port is listening");
