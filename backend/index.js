@@ -13,26 +13,37 @@ const client = new MongoClient(uri, { useUnifiedTopology: true }); // { useUnifi
 const database = client.db("expertsystem");
 const ques = database.collection("questions");
 const rules = database.collection("rules");
+const carreers = database.collection("careers");
+
 const host = 'localhost';
 const port = 8000;
 var questionsArray = [];
 var traitsArray = [];
 var rulesList = [];
-var numberOfQuestions = 0;
 var careersList = [];
+var numberOfQuestions = 0;
 
 async function run() {
-  const cursor = ques.find({});
-  await cursor.forEach(document => {
-    questionsArray.push(document.question);
-    traitsArray.push(document.trait);
+    const cursor = ques.find({});
+await cursor.forEach(document => {
+    questionsArray.push(document.question); 
+    traitsArray.push(document.trait);  
   }
-  );
+);
   numberOfQuestions = questionsArray.length;
 }
 
-run();
+async function getCareers() {
+  const getCareer = carreers.find({});
+await getCareer.forEach(document => {
+  careersList.push(document.career); 
+}
+);
+}
 
+
+run();
+getCareers();
 var k = 0;
 async function getRules() {
   for (let _id = 1; ; _id++) {
@@ -46,25 +57,11 @@ async function getRules() {
         rulesList.push(arr);
       }
     }
-
-  }
-}
-async function getCareer() {
-  for (let _id = 1; ; _id++) {
-    const document = await rules.findOne({ _id });
-    if (document != null) {
-      const str = document.rule;
-      const matches = str.match(/,[a-z ]*\)/);
-      if (matches) {
-        var result = matches[0].split(")")[0].slice(1);
-        careersList.push(result);
-      }
-    }
+  
   }
 }
 
 getRules();
-getCareer();
 
 app.get('/', (req, res) => {
   const html = `
@@ -224,61 +221,114 @@ app.get('/all-questions', (req, res) => {
 
   res.send(html);
 });
-function howManyRules(fixedArray, inputArray) {
-  var counter = 0;
-  var fixedArraylen = fixedArray.length;
-  var inputArraylen = inputArray.length;
-  if (fixedArraylen <= inputArraylen) {
-    for (var i = 0; i < fixedArraylen; i++) {
-      if (inputArray.indexOf(fixedArray[i]) >= 0) {
-        counter++;
-      }
-
+function checkElementsinArray(fixedArray,inputArray)
+{
+    var fixedArraylen = fixedArray.length;
+    var inputArraylen = inputArray.length;
+    if(fixedArraylen<=inputArraylen)
+    {
+        for(var i=0;i<fixedArraylen;i++)
+        {
+            if(!(inputArray.indexOf(fixedArray[i])>=0))
+            {
+                return false;
+            }
+        }
     }
-  }
-  else {
-    return 0;
-  }
-  console.log(careersList[rulesList.indexOf(fixedArray)]);
-  console.log(counter + "/" + fixedArray.length);
-  return counter;
+    else
+    {
+        return false;
+    }
+    return true;
 }
 
-let checker = (arr, target) => target.every(v => arr.includes(v));
+// let checker = (arr, target) => target.every(v => arr.includes(v));
 var listOfTraits = [];
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/submit-quiz', (req, res) => {
-  const answers = req.body;
+  const answers = req.body; 
   const values = Object.values(answers);
-  if (values.length == numberOfQuestions) {
+  if(values.length == numberOfQuestions) {
     //here we'll create a bond between answers and traits
-    var counter = 0;
-    traitsArray.forEach(doc => {
-      if (values[counter] == 'yes') {
+   var counter = 0;
+   traitsArray.forEach(doc => {
+    if(values[counter] == 'yes') {
         listOfTraits.push(doc);
+    }
+    counter++;
+   })
+  }
+ 
+  var i = 0;
+  var career = "career";
+
+ rulesList.forEach(rule => {
+    if(i==0) {
+    }
+    if(checkElementsinArray(rule, listOfTraits))
+      {
+    career = careersList[i];
+    res.send(
+      `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Quiz Results</title>
+          <style>
+            body {
+              background-color: #f5f5ed; 
+            }
+            h1 {
+              margin-top: 50px;
+            }
+            .result {
+              background-color: white;
+              padding: 20px;
+              border-radius: 10px; 
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+              max-width: 500px;
+              margin: 0 auto; 
+
+              text-align: center; 
+            }
+            .navbar {
+              background-color:#455843;
+              overflow: hidden;
+            }
+            .navbar a {
+              float: left;
+              color: white;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+            }
+            .navbar a:hover {
+              background-color: #b4c7ab;
+              color: black;
+            }
+            }
+          </style>
+        </head>
+        <body>
+        <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/all-questions">Quiz</a>
+      </div>
+          <div class="result">
+            <h2>Your recommended career:</h2>
+            <p>${career}</p>
+          </div>
+        </body>
+        </html>
+      `);
+      return;
+    
       }
-      counter++;
-    })
-  }
+  i++;
+ })
+ 
 
-
-  var career = [];
-  console.log(listOfTraits);
-  console.log(rulesList);
-  //console.log(careersList);
-  rulesList.forEach(rule => {
-   if(howManyRules(rule, listOfTraits) >= rule.length-1){
-    //console.log(careersList[rulesList.indexOf(rule)]);
-    career.push(careersList[rulesList.indexOf(rule)]);
-   }
-
-  })
-  if(career.length !== 0){
-    res.send(career);
-  }else{
-    res.send("Nu s-a o cariera pentru dumneavoastra!");
-  }
 });
 
 app.listen(8000, () => {
